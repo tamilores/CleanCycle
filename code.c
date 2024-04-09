@@ -25,22 +25,29 @@ Purpose: Should be able to display the sum of waste in the trash bin.
 Should work with the ultrasonic sensor or the capactive sensor.
 
 Servo Motor -
-Purpose: Be able to ratate about 180 degrees to open the lid, wait for a few 
+Purpose: Be able to ratate about 90 degrees to open the lid, wait for a few 
 miliseconds, and then rotate the opposite way to close the lid back.
 *** Important Note: Will need some hardware components to help with rotation. ***
 
 LEDs (Placeholders to know if code is working but don't mind if included) -
 Purpose: One led blinks when trash is dispose in the trashbin. Another led 
 will lit up when trashbin is full and turn off when its not full.
-
 */
+
+
 #include <Servo.h>
 #include "SevSeg.h"
+#define echoPin 2          //pin that sends out output for ultrasonic motion sensor 
+#define trigPin 3          //pin that will listen for response for unltrasonic motion sensor
 SevSeg sevseg;
 
 //Ultrasonic senors
 const int anPin = 0; long anVolt, cm; //Sum of trash 
 const int anPin2 = 1; long anVolt2, cm2; //Full trash bin?
+long duration;                    //time it takes for the waves to bounce back after hitting an object
+int distance;                     //distance from the object
+
+
 //Servo motor
 Servo myservo; int pos = 0;
 //LEDs
