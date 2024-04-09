@@ -37,13 +37,15 @@ will lit up when trashbin is full and turn off when its not full.
 
 #include <Servo.h>
 #include "SevSeg.h"
+SevSeg sevseg;
+
 #define echoPin 2          //pin that sends out output for ultrasonic motion sensor 
 #define trigPin 3          //pin that will listen for response for unltrasonic motion sensor
-SevSeg sevseg;
 
 //Ultrasonic senors
 const int anPin = 0; long anVolt, cm; //Sum of trash 
 const int anPin2 = 1; long anVolt2, cm2; //Full trash bin?
+
 long duration;                    //time it takes for the waves to bounce back after hitting an object
 int distance;                     //distance from the object
 
