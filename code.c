@@ -39,24 +39,75 @@ will lit up when trashbin is full and turn off when its not full.
 #include "SevSeg.h"
 SevSeg sevseg;
 
-#define echoPin 2          //pin that sends out output for ultrasonic motion sensor 
-#define trigPin 3          //pin that will listen for response for unltrasonic motion sensor
-
 //Ultrasonic senors
 const int anPin = 0; long anVolt, cm; //Sum of trash 
 const int anPin2 = 1; long anVolt2, cm2; //Full trash bin?
-
+  //motion sensor
 long duration;                    //time it takes for the waves to bounce back after hitting an object
 int distance;                     //distance from the object
+#define echoPin 2          //pin that sends out output for ultrasonic motion sensor 
+#define trigPin 3          //pin that will listen for response for unltrasonic motion sensor
+#define maxDistance 10     //max object distance between motion sensor and object to activate sensor
 
 
 //Servo motor
-Servo myservo; int pos = 0;
+Servo myservo; 
+int pos = 0;
 //LEDs
-int LED = 13; int LED2 = 12;
+int LED = 13; 
+int LED2 = 12;
 int trash = 0;
 
+void setup() {
+//put your setup code here, to run once:
+  //Motion Sensor
+  pinMode(trigPin, OUTPUT);    //sends out output
+  pinMode(echoPin, INPUT);     //listen for response
+  Serial.begin(9600);
+  
+  //Servo Motor
+  Serial.begin(9600); 
+  myservo.attach(9);
+  
+  //LEDs
+  pinMode(LED, OUTPUT); 
+  pinMode(LED2, OUTPUT); 
+  
+  // Display
+  byte numDigits = 4; 
+  byte digitPins[] = {2,3,4,5};
+  byte segmentPins[] = {6,7,8,9,10,11,12,13};
+  bool resistorsOnSegments = 0;
+  sevseg.begin(COMMON_CATHODE, numDigits, digitPins, segmentPins, resistorsOnSegments);
+  sevseg.setBrightness(90);
+}
+
+void loop() {
+  //Put your main code here, to run repeatedly:
+  read_ultrasensor();         // Initialize the range of an object
+  print_range();              // Test out code to know how far an object is.
+  //blink_count(); // Count the amount of trash
+  //full_bin();
+  delay(100);
+
+}
+
 void read_ultrasensor() {
+  //TAMI
+  digitalWrite(trigPin, HIGH):
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW):
+  delayMicroseconds(2);
+
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;    //read duration and distance(cm)
+
+  if(distance == maxDistance){
+    //do something with LEDS
+  };
+
+  
+  //VIANEY
   // Vcc to 5V. GND to GND. Trig or Echo to A0.
   // First sensor
   anVolt = analogRead(anPin); //aPin = A0
@@ -119,28 +170,4 @@ void open_lid() {
       delay(15);
     }
   }
-}
-
-void setup() {
-  // put your setup code here, to run once:
-  //Servo Motor
-  Serial.begin(9600); myservo.attach(9);
-  //LEDs
-  pinMode(LED, OUTPUT); pinMode(LED2, OUTPUT); 
-  // Display
-  byte numDigits = 4; byte digitPins[] = {2,3,4,5};
-  byte segmentPins[] = {6,7,8,9,10,11,12,13};
-  bool resistorsOnSegments = 0;
-  sevseg.begin(COMMON_CATHODE, numDigits, digitPins, segmentPins, resistorsOnSegments);
-  sevseg.setBrightness(90);
-}
-
-void loop() {
-  //Put your main code here, to run repeatedly:
-  read_ultrasensor(); // Initialize the range of an object
-  print_range(); // Test out code to know how far an object is.
-  //blink_count(); // Count the amount of trash
-  //full_bin();
-  delay(100);
-
 }
