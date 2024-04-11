@@ -7,29 +7,22 @@
 /*
 Ultrasonic Sensor -
 Purpose: Be able to detect when the trash bin is full. 
-
-Ultrasonic Sensor 2 (This could be combined into the first sensor) 
-[!!Capacitive Proximity Sensor!!] -
 Purpose: Be able to count how much trash has been thrown out. If possible 
 track what kind of trash it is such as metal, plastic, paper, and etc.
 *** Important Note: This may be change for another sensor. ***
-
-Ultrasonic Sensor 2 -
-Purpose: It could be used for motion sensor to open the trash bin lid.
-
-Order Sensor -
-Purpose: Be able to detect bad smells in the trashbin.
-
 4 Digit 7 Segment Display (Not Needed But would be fun to include) -
 Purpose: Should be able to display the sum of waste in the trash bin. 
 Should work with the ultrasonic sensor or the capactive sensor.
+
+Ultrasonic Sensor 2 -
+Purpose: It could be used for motion sensor to open the trash bin lid.
 
 Servo Motor -
 Purpose: Be able to ratate about 90 degrees to open the lid, wait for a few 
 miliseconds, and then rotate the opposite way to close the lid back.
 *** Important Note: Will need some hardware components to help with rotation. ***
 
-LEDs (Placeholders to know if code is working but don't mind if included) -
+LEDs -
 Purpose: One led blinks when trash is dispose in the trashbin. Another led 
 will lit up when trashbin is full and turn off when its not full.
 */
@@ -45,21 +38,24 @@ const int anPin2 = 1; long anVolt2, cm2; //Full trash bin?
   //motion sensor
 long duration;                    //time it takes for the waves to bounce back after hitting an object
 int distance;                     //distance from the object
-#define echoPin 2          //pin that sends out output for ultrasonic motion sensor 
-#define trigPin 3          //pin that will listen for response for unltrasonic motion sensor
-#define maxDistance 10     //max object distance between motion sensor and object to activate sensor
-
+  //pin that sends out output for ultrasonic motion sensor 
+#define echoPin 2 
+  //pin that will listen for response for unltrasonic motion sensor
+#define trigPin 3 
+  //max object distance between motion sensor and object to activate sensor
+#define maxDistance 10     
 
 //Servo motor
 Servo myservo; 
 int pos = 0;
+
 //LEDs
 int LED = 13; 
 int LED2 = 12;
 int trash = 0;
 
+//setup code here, to run once:
 void setup() {
-//put your setup code here, to run once:
   //Motion Sensor
   pinMode(trigPin, OUTPUT);    //sends out output
   pinMode(echoPin, INPUT);     //listen for response
@@ -73,7 +69,7 @@ void setup() {
   pinMode(LED, OUTPUT); 
   pinMode(LED2, OUTPUT); 
   
-  // Display
+  //7 seg Display
   byte numDigits = 4; 
   byte digitPins[] = {2,3,4,5};
   byte segmentPins[] = {6,7,8,9,10,11,12,13};
@@ -82,8 +78,8 @@ void setup() {
   sevseg.setBrightness(90);
 }
 
+//main code here, to run repeatedly:
 void loop() {
-  //Put your main code here, to run repeatedly:
   read_ultrasensor();         // Initialize the range of an object
   print_range();              // Test out code to know how far an object is.
   //blink_count(); // Count the amount of trash
