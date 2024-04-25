@@ -72,7 +72,7 @@ void loop() {
 
 
 void read_servo(){
-  for(pos = 0; pos <= 90; pos++){     //in a for loop so motor opens slowly
+  for(pos = 0; pos <= 90; pos++){     //in a for loop so motor opens slowly to 90 degrees
     myServo.write(pos);
     delay(20);                        //delay of 20ms each time
   }
