@@ -96,7 +96,7 @@ void read_ultrasensor() {
   if(distance <= maxDistance){
     read_servo();
   };
-  ////////////////////////////////////////////////OR
+  /*ANOTHER IMPLEMENTATION, WHICH IS BETTER??*/
   sensStat = digitalRead(sensPin);
   if(sensStat == HIGH){
     read_servo();
