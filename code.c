@@ -33,6 +33,8 @@ int distance;                    //distance from the object
                                  //max object distance between motion sensor and object to activate sensor
 #define maxDistance 10     
 
+/* ULTRASONIC SENSORS: PRESSURE SENSOR */
+
 
 /* SERVO MOTOR */
 Servo myServo; 
@@ -94,7 +96,7 @@ void read_ultrasensor() {
   if(distance <= maxDistance){
     read_servo();
   };
-  ////////////////////////////////////////////////
+  ////////////////////////////////////////////////OR
   sensStat = digitalRead(sensPin);
   if(sensStat == HIGH){
     read_servo();
