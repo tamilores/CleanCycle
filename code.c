@@ -108,7 +108,7 @@ void read_ultrasensor() {
 
 
 
-
+/*IGNORE*/
 void full_trashbin() {
   // Expect the ultrasonic senor to be on bottom of the trashbin lid.
   // Or it could be placed on the side of the trashbin.
