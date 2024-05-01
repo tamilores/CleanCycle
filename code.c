@@ -4,10 +4,10 @@
 // Date: March 29, 2024 at 8:00pm
 
 /* 
-Ultrasonic Sensor -
+Ultrasonic Sensor 1 (Motion Sensor) -
 Purpose: It could be used for motion sensor to open the trash bin lid.
 
-Ultrasonic Sensor 2 -
+Ultrasonic Sensor 2 (Fullness Sensor) -
 Purpose: Be able to detect when the trash bin is full.
 
 Servo Motor -
@@ -23,50 +23,54 @@ Purpose: led will lit up when trashbin is full and turn off when its not full.
 #include <Servo.h>
 #include "SevSeg.h"
 
-/* ULTRASONIC SENSORS: MOTION SENSOR */
-long duration;                   //time it takes for the waves to bounce back after hitting an object
-int distance;                    //distance from the object
-                                 //pin that sends out output for ultrasonic motion sensor 
-#define echoPin 2                 
-                                 //pin that will listen for response for unltrasonic motion sensor
-#define trigPin 3 
-                                 //max object distance between motion sensor and object to activate sensor
-#define maxDistance 10     
+/* ULTRASONIC SENSORS: MOTION SENSOR */                                 
+#define motionEchoPin 2                 //pin that sends out output for ultrasonic motion sensor (motion sensor to open trash)      
+#define motionTrigPin 3                 //pin that will listen for response for unltrasonic motion sensor 
 
-/* ULTRASONIC SENSORS: PRESSURE SENSOR */
-
+/* ULTRASONIC SENSORS: FULLNESS SENSOR */
+#define fullEchoPin 4                   //pin that sends out output for ultrasonic motion sensor (sensor to detect fullness of trash)       
+#define fullTrigPin 5                   //pin that will listen for response for unltrasonic motion sensor
 
 /* SERVO MOTOR */
 Servo myServo; 
-int servoPin = 0;                //change to pin servo is connected to
-int sensPin = A0;                //input device that is controlling our motor (motion sensor), change to correct pin that is connected
-int sensStat = 0;                //value in sensor
-int pos = 0;                     //position
-
+int servoPin = 0;                      //change to pin servo is connected to
+int motionSensPin = A0;                //input device that is controlling our motor (motion sensor), change to correct pin that is connected
+int motionSensVal = 0;                 //value in sensor
+int pos = 0;                           //position
 
 /* LED */
-int LED = 13;                    //lights up when trash is full
+#define ledPin = 13;                   //lights up when trash is full, change to pin LED is connected to 
+int fullSensPin = A0;                  //input device that is controlling our LED (fullness sensor), change to correct pin that is connected
+int fullSensVal = 0;                   //value in sensor
 
 
 void setup() {
-  /* MOTION SENSOR */
-  pinMode(trigPin, OUTPUT);      //sends out output
-  pinMode(echoPin, INPUT);       //listen for response
+  /* MOTION SENSOR - OPEN LID */
+  pinMode(motionTrigPin, OUTPUT);      //sends out output
+  pinMode(motionEchoPin, INPUT);       //listen for response
+  Serial.begin(9600);
+
+  /* MOTION SENSOR - DETECT IF TRASH IS FULL */
+  pinMode(fullTrigPin, OUTPUT);        //sends out output
+  pinMode(fullEchoPin, INPUT);         //listen for response
   Serial.begin(9600);
   
   /* SERVO MOTOR */
-  pinMode(sensPin, INPUT);
+  pinMode(motionSensPin, INPUT);
   myServo.attach(servoPin);
   Serial.begin(9600); 
-  myServo.write(pos);            //initial value is 0 
+  myServo.write(pos);                  //initial value is 0 
   
   /* LED */
-  pinMode(LED, OUTPUT); 
+  pinMode(fullSensPin, INPUT);
+  pinMode(ledPin, OUTPUT); 
+  Serial.begin(9600);
 }
 
 
 void loop() {
-  read_ultrasensor();        
+  read_motionsensor();
+  read_fullsensor();
   delay(100);
 }
 
@@ -84,64 +88,13 @@ void read_servo(){
 }
 
 
-void read_ultrasensor() {
-  digitalWrite(trigPin, HIGH):
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW):
-  delayMicroseconds(2);
-
-  duration = pulseIn(echoPin, HIGH);
-  distance = duration * 0.034 / 2;    //read duration and distance(cm)
-
-  if(distance <= maxDistance){
-    read_servo();
-  };
-  /*ANOTHER IMPLEMENTATION, WHICH IS BETTER??*/
-  sensStat = digitalRead(sensPin);
-  if(sensStat == HIGH){
-    read_servo();
-  }
+void read_motionsensor() {
+  motionSensVal = digitalRead(motionSensPin);
+  if(motionSensVal == HIGH){ read_servo(); }
 }
 
 
-
-
-
-
-/*IGNORE*/
-void full_trashbin() {
-  // Expect the ultrasonic senor to be on bottom of the trashbin lid.
-  // Or it could be placed on the side of the trashbin.
-  if(cm2 <= 5) { 
-    Serial.println("Trash bin is full!!!"); 
-    // LED+ & one 1k-ohms reisitor to pin 12 and LED- to GND.
-    pinMode(LED2,HIGH);
-  }
-  else { pinMode(LED2,LOW); }
-}
-
-//Placeholder to know if an object is drop into bin.
-//Also should count how much trash is thrown out.
-void blink_count() {
-  // Light up when it detect an object in front of the sensor.
-  // LED+ & one 1k-ohms reisitor to pin 13 and LED- to GND.
-  pinMode(LED,HIGH); delay(500);
-  pinMode(LED,LOW); delay(500);
-  // Ultrasonic sensor 
-  if(cm >= 2 && cm <= 300) { trash += 1; } 
-  // 4 Digit 7-Segment Display
-  // Rows 22 to 27 for 10 pins. Five 1k-ohms resistors.
-  sevseg.setNumber(trash);
-  sevseg.refreshDisplay();
-}
-
-void print_range() { // This function will be deleted.
-  if(cm <= 500 && cm >= 2) {
-    blink_count();
-    // Detect how far an object is from the ultrasonic sensor.
-    Serial.print("Range = ");
-    Serial.print(cm);
-    Serial.println(" cm");
-  }
-  else { Serial.println("Detect nothing or item is out of Range!"); }
+void read_fullsensor() {
+  fullSensVal = digitalRead(fullSensPin);
+  digitalWrite(ledPin, fullSensVal);
 }
