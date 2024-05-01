@@ -1,6 +1,5 @@
 //This file will be split up into mulltiple files to represent necessary parts later on
 
-// Programmers: Vianey Rivera, Tami Sojinrin
 // Date: March 29, 2024 at 8:00pm
 
 /* 
