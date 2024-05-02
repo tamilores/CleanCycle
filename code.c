@@ -27,41 +27,41 @@ Purpose: led will lit up when trashbin is full and turn off when its not full.
 #define motionTrigPin 3                 //pin that will listen for response for unltrasonic motion sensor 
 
 /* ULTRASONIC SENSORS: FULLNESS SENSOR */
-#define fullEchoPin 4                   //pin that sends out output for ultrasonic motion sensor (sensor to detect fullness of trash)       
+#define motionEchoPin 4                   //pin that sends out output for ultrasonic motion sensor (sensor to detect fullness of trash)       
 #define fullTrigPin 5                   //pin that will listen for response for unltrasonic motion sensor
 
 /* SERVO MOTOR */
 Servo myServo; 
 int servoPin = 0;                      //change to pin servo is connected to
-int motionSensPin = A0;                //input device that is controlling our motor (motion sensor), change to correct pin that is connected
+//int motionSensPin = A0;                //input device that is controlling our motor (motion sensor), change to correct pin that is connected
 int motionSensVal = 0;                 //value in sensor
 int pos = 0;                           //position
 
 /* LED */
 #define ledPin = 13;                   //lights up when trash is full, change to pin LED is connected to 
-int fullSensPin = A0;                  //input device that is controlling our LED (fullness sensor), change to correct pin that is connected
+//int fullSensPin = A0;                  //input device that is controlling our LED (fullness sensor), change to correct pin that is connected
 int fullSensVal = 0;                   //value in sensor
 
 
 void setup() {
   /* MOTION SENSOR - OPEN LID */
-  pinMode(motionTrigPin, OUTPUT);      //sends out output
-  pinMode(motionEchoPin, INPUT);       //listen for response
+  pinMode(motionTrigPin, INPUT);      //listen for response
+  pinMode(motionEchoPin, OUTPUT);       //sends out output
   Serial.begin(9600);
 
   /* MOTION SENSOR - DETECT IF TRASH IS FULL */
-  pinMode(fullTrigPin, OUTPUT);        //sends out output
-  pinMode(fullEchoPin, INPUT);         //listen for response
+  pinMode(fullTrigPin, INPUT);        //listen for response
+  pinMode(fullEchoPin, OUTPUT);         //sends out output
   Serial.begin(9600);
   
   /* SERVO MOTOR */
-  pinMode(motionSensPin, INPUT);
+//pinMode(motionSensPin, INPUT);
   myServo.attach(servoPin);
   Serial.begin(9600); 
   myServo.write(pos);                  //initial value is 0 
   
   /* LED */
-  pinMode(fullSensPin, INPUT);
+  //pinMode(fullSensPin, INPUT);
   pinMode(ledPin, OUTPUT); 
   Serial.begin(9600);
 }
@@ -88,12 +88,12 @@ void read_servo(){
 
 
 void read_motionsensor() {
-  motionSensVal = digitalRead(motionSensPin);
+  motionSensVal = digitalRead(motiontTrigPin);  //am i reading input or output
   if(motionSensVal == HIGH){ read_servo(); }
 }
 
 
 void read_fullsensor() {
-  fullSensVal = digitalRead(fullSensPin);
+  fullSensVal = digitalRead(fullTrigPin);
   digitalWrite(ledPin, fullSensVal);
 }
