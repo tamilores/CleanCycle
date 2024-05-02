@@ -23,8 +23,8 @@ Purpose: led will lit up when trashbin is full and turn off when its not full.
 #include "SevSeg.h"
 
 /* ULTRASONIC SENSORS: MOTION SENSOR */                                 
-#define motionEchoPin 2                 //pin that sends out output for ultrasonic motion sensor (motion sensor to open trash)      
-#define motionTrigPin 3                 //pin that will listen for response for unltrasonic motion sensor 
+#define motionEchoPin 3                 //pin that sends out output for ultrasonic motion sensor (motion sensor to open trash)      
+#define motionTrigPin 2                 //pin that will listen for response for unltrasonic motion sensor 
 
 /* ULTRASONIC SENSORS: FULLNESS SENSOR */
 #define motionEchoPin 4                   //pin that sends out output for ultrasonic motion sensor (sensor to detect fullness of trash)       
