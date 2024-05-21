@@ -1,5 +1,3 @@
-//This file will be split up into mulltiple files to represent necessary parts later on
-
 // Date: March 29, 2024 at 8:00pm
 
 /* 
@@ -20,80 +18,66 @@ Purpose: led will lit up when trashbin is full and turn off when its not full.
 
 
 #include <Servo.h>
-#include "SevSeg.h"
+#include <NewPing.h>
 
-/* ULTRASONIC SENSORS: MOTION SENSOR */                                 
-#define motionEchoPin 2                 //pin that sends out output for ultrasonic motion sensor (motion sensor to open trash)      
-#define motionTrigPin 3                 //pin that will listen for response for unltrasonic motion sensor 
+#define motionTrigPin 3
+#define motionEchoPin 2
+#define fullTrigPin 5
+#define fullEchoPin 4
+#define ledPin 13
+#define servoPin 9
+#define MAX_DISTANCE 200             // Maximum distance we want to ping for (in centimeters).
+#define MOTION_THRESHOLD 20          // Distance threshold for motion detection (cm).
+#define FULLNESS_THRESHOLD 10        // Distance threshold for fullness detection (cm).
+#define DEBOUNCE_TIME 1000           // Debounce time in milliseconds.
 
-/* ULTRASONIC SENSORS: FULLNESS SENSOR */
-#define fullEchoPin 4                   //pin that sends out output for ultrasonic motion sensor (sensor to detect fullness of trash)       
-#define fullTrigPin 5                   //pin that will listen for response for unltrasonic motion sensor
+Servo myServo;
+NewPing motionSensor(motionTrigPin, motionEchoPin, MAX_DISTANCE);
+NewPing fullnessSensor(fullTrigPin, fullEchoPin, MAX_DISTANCE);
 
-/* SERVO MOTOR */
-Servo myServo; 
-int servoPin = 9;                      //change to pin servo is connected to
-//int motionSensPin = A0;                //input device that is controlling our motor (motion sensor), change to correct pin that is connected
-int motionSensVal = 0;                 //value in sensor
-int pos = 0;                           //position
-
-/* LED */
-#define ledPin = 13;                   //lights up when trash is full, change to pin LED is connected to 
-//int fullSensPin = A0;                  //input device that is controlling our LED (fullness sensor), change to correct pin that is connected
-int fullSensVal = 0;                   //value in sensor
-
+unsigned long lastMotionTime = 0;
+bool lidOpen = false;
 
 void setup() {
-  /* MOTION SENSOR - OPEN LID */
-  pinMode(motionTrigPin, INPUT);      //listen for response
-  pinMode(motionEchoPin, OUTPUT);       //sends out output
-  Serial.begin(9600);
-
-  /* MOTION SENSOR - DETECT IF TRASH IS FULL */
-  pinMode(fullTrigPin, INPUT);        //listen for response
-  pinMode(fullEchoPin, OUTPUT);         //sends out output
-  Serial.begin(9600);
-  
-  /* SERVO MOTOR */
-//pinMode(motionSensPin, INPUT);
+  pinMode(ledPin, OUTPUT);
   myServo.attach(servoPin);
-  Serial.begin(9600); 
-  myServo.write(pos);                  //initial value is 0 
-  
-  /* LED */
-  //pinMode(fullSensPin, INPUT);
-  pinMode(ledPin, OUTPUT); 
+  myServo.write(0); // Initial position
   Serial.begin(9600);
 }
-
 
 void loop() {
-  read_motionsensor();
-  read_fullsensor();
-  delay(100);
+  readMotionSensor();
+  readFullnessSensor();
+  delay(100); // Short delay to reduce sensor reading frequency
 }
 
-
-void read_servo(){
-  for(pos = 0; pos <= 90; pos++){     //in a for loop so motor opens slowly to 90 degrees
-    myServo.write(pos);
-    delay(20);                        //delay of 20ms each time
+void readMotionSensor() {
+  if (millis() - lastMotionTime > DEBOUNCE_TIME) {
+    unsigned int distance = motionSensor.ping_cm();
+    if (distance > 0 && distance < MOTION_THRESHOLD && !lidOpen) {
+      operateServo(true);
+      lastMotionTime = millis();
+      lidOpen = true;
+      delay(3000);
+      operateServo(false);
+      lidOpen = false;  
+    }
   }
-  delay(3000);                        //stay open for 3s
-  for(pos = 90; pos >= 0; pos--){     //in a for loop so motor closes slowly
+}
+
+
+void readFullnessSensor() {
+  unsigned int distance = fullnessSensor.ping_cm();
+  bool isFull = distance > 0 && distance < FULLNESS_THRESHOLD;
+  digitalWrite(ledPin, isFull);
+}
+
+void operateServo(bool opening) {
+  int startPos = opening ? 0 : 90;
+  int endPos = opening ? 90 : 0;
+  for (int pos = startPos; pos != endPos; opening ? pos++ : pos--) {
     myServo.write(pos);
-    delay(20);    
+    delay(20);
   }
-}
-
-
-void read_motionsensor() {
-  motionSensVal = digitalRead(motiontTrigPin);  //am i reading input or output
-  if(motionSensVal == HIGH){ read_servo(); }
-}
-
-
-void read_fullsensor() {
-  fullSensVal = digitalRead(fullTrigPin);
-  digitalWrite(ledPin, fullSensVal);
+ 
 }
